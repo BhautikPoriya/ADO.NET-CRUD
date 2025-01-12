@@ -1,7 +1,6 @@
 ﻿using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -27,6 +26,7 @@ namespace CRUD_ADO.Net.Models
             while (reader.Read())
             {
                 Employee employee = new Employee();
+                employee.Id = Convert.ToInt32(reader["Id"]);
                 employee.Name = reader["Name"].ToString();
                 employee.Gender = reader.GetValue(2).ToString();
                 employee.Age = Convert.ToInt32(reader["Age"]);
@@ -46,6 +46,33 @@ namespace CRUD_ADO.Net.Models
             SqlCommand command = new SqlCommand(insertEmployeeSP, conenction);
             command.CommandType = CommandType.StoredProcedure;
 
+            command.Parameters.AddWithValue("@name", employee.Name);
+            command.Parameters.AddWithValue("@gender", employee.Gender);
+            command.Parameters.AddWithValue("@age", employee.Age);
+            command.Parameters.AddWithValue("@city", employee.City);
+
+            conenction.Open();
+            int i = command.ExecuteNonQuery();
+            conenction.Close();
+
+            if(i > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;   
+            }
+        }
+        
+        public bool UpdateEmployee(Employee employee)
+        {
+            SqlConnection conenction = new SqlConnection(conenctionString);
+            string insertEmployeeSP = "spUpdateEmployee";
+            SqlCommand command = new SqlCommand(insertEmployeeSP, conenction);
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@id", employee.Id);
             command.Parameters.AddWithValue("@name", employee.Name);
             command.Parameters.AddWithValue("@gender", employee.Gender);
             command.Parameters.AddWithValue("@age", employee.Age);

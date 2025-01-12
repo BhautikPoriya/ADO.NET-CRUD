@@ -25,9 +25,32 @@ namespace CRUD_ADO.Net.Controllers
         [HttpPost]
         public ActionResult Create(Employee employee)
         {
-            if (_employeeDbContext.InsertEmployee(employee))
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                if (_employeeDbContext.InsertEmployee(employee))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            return View();
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var employee = _employeeDbContext.getEmployeeList().Where(x => x.Id == id).FirstOrDefault();    
+            return View(employee);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Employee employee)
+        {
+            if (ModelState.IsValid)
+            {
+                if (_employeeDbContext.UpdateEmployee(employee))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             return View();
